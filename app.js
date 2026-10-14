@@ -16,7 +16,9 @@
   const FRUITS = ["🍎", "🍌", "🍉", "🥭", "🍍", "🍊", "🍇", "🍓"];
 
   // ============================================================
-  // LEVELS
+  // LEVELS — setiap level ada:
+  //   hint      = teks Bahasa Malaysia untuk paparan UI
+  //   hintAudio = teks ENGLISH untuk audio
   // ============================================================
   const LEVELS = {
     mudah: [
@@ -31,9 +33,7 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 5,
-        // Teks BM untuk UI
         hint: "Chompy perlu jalan 3 langkah ke kanan untuk makan buah.",
-        // Teks English untuk AUDIO sahaja
         hintAudio: "Chompy needs to walk three steps to the right to eat the fruit.",
       },
       {
@@ -133,7 +133,7 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 10,
-        hint: "Makan buah dahulu, kemudian pergi ke rumah 🏠.",
+        hint: "Makan buah dahulu, kemudian pergi ke rumah.",
         hintAudio: "Eat the fruit first, then go home.",
       },
     ],
@@ -207,8 +207,8 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 99,
-        hint: "Guru boleh ubah peta. Murid cuba cari jalan sendiri.",
-        hintAudio: "Teachers can change the map. Students find their own path.",
+        hint: "Guru boleh ubah peta dalam kod. Murid cari jalan sendiri.",
+        hintAudio: "Teachers can change the map in the code. Students find their own path.",
         free: true,
       },
     ],
@@ -224,7 +224,7 @@
     bebas:     { title: "Mod Bebas",       hint: "Cipta jalan sendiri. Guru boleh ubah peta dalam kod.", color: "#7B5CFF" },
   };
 
-  // Blok arahan — teks BM, tetapi audio English
+  // Blok arahan — teks BM untuk UI, audio English untuk suara
   const BLOCKS = [
     { id: "up",    label: "Atas",  icon: "⬆️", color: "#7B5CFF", audio: "Up" },
     { id: "down",  label: "Bawah", icon: "⬇️", color: "#13A89E", audio: "Down" },
@@ -251,7 +251,7 @@
   };
 
   // ============================================================
-  // AUDIO — Speech synthesis dalam BAHASA INGGERIS
+  // AUDIO — kesan bunyi
   // ============================================================
   let actx;
   function tone(freq, dur = 0.12, type = "triangle", delay = 0, vol = 0.18) {
@@ -274,14 +274,17 @@
   const bumpSound = () => tone(150, 0.15, "sawtooth", 0, 0.15);
   const winSound = () => { [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, 0.2, "triangle", i * 0.1, 0.2)); };
 
-  // ------------------------------------------------------------
-  // English voice picker (priority: en-GB > en-US > en > default)
-  // ------------------------------------------------------------
+  // ============================================================
+  // SPEECH SYNTHESIS — BAHASA INGGERIS SAHAJA
+  // ============================================================
   let voice = null;
+  let voiceReady = false;
+
   function pickEnglishVoice() {
     if (!window.speechSynthesis) return;
     const vs = speechSynthesis.getVoices();
     if (!vs.length) return;
+    // Keutamaan: en-GB > en-US > en-AU > mana-mana en > default
     voice =
       vs.find((v) => /^en[-_]GB/i.test(v.lang)) ||
       vs.find((v) => /^en[-_]US/i.test(v.lang)) ||
@@ -289,8 +292,10 @@
       vs.find((v) => /^en/i.test(v.lang)) ||
       vs.find((v) => v.default) ||
       vs[0];
+    voiceReady = true;
     console.log("[Chompy] Voice:", voice ? `${voice.name} (${voice.lang})` : "none");
   }
+
   if (window.speechSynthesis) {
     pickEnglishVoice();
     speechSynthesis.onvoiceschanged = pickEnglishVoice;
@@ -298,22 +303,23 @@
     setTimeout(pickEnglishVoice, 1500);
   }
 
-  // Fungsi utama untuk ucap — sentiasa ENGLISH
+  // Fungsi utama — sentiasa ENGLISH
   function say(text) {
     if (!store.sound || !window.speechSynthesis) return;
     try {
       speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = "en-GB";                 // <-- ENGLISH sahaja
+      u.lang = "en-GB";                 // <-- ENGLISH SAHAJA
       if (voice) u.voice = voice;
       u.rate = 0.95;
       u.pitch = 1.1;
       u.volume = 1;
+      if (!voice && !voiceReady) pickEnglishVoice();
       speechSynthesis.speak(u);
-    } catch {}
+    } catch (err) { console.warn("[Chompy] Audio error:", err); }
   }
 
-  // Warm up audio on first user interaction
+  // Warm-up audio pada interaksi pertama
   let audioWarmed = false;
   function warmAudio() {
     if (audioWarmed) return;
@@ -427,15 +433,14 @@
     }
 
     $("#playTitle").textContent = `${MODES[state.mode].title}: ${lv.nama}`;
-    $("#playInstruction").textContent = lv.hint;
+    $("#playInstruction").textContent = lv.hint;   // teks BM
     $("#progressFill").style.width = "0%";
     updateBlockCount();
     renderPalette();
     renderBoard();
     renderCode();
     show("play");
-    // Audio dalam ENGLISH
-    say(lv.hintAudio || lv.hint);
+    say(lv.hintAudio || lv.hint);                  // audio English
   }
 
   // ============================================================
@@ -487,7 +492,7 @@
   function addBlock(id) {
     const lv = LEVELS[state.mode][state.levelIndex];
     if (state.code.length >= lv.maxBlocks) {
-      say("Code is full.");           // Audio English
+      say("Code is full.");                 // audio English
       return;
     }
     state.code.push(id);
@@ -550,16 +555,16 @@
 
     if (state._win) {
       winSound();
-      say("Well done! Chompy is full!");           // Audio English
+      say("Well done! Chompy is full!");                              // audio English
       setStars(state.mode, "L" + state.levelIndex, 3);
       confetti();
       setTimeout(() => showResult(3, "Syabas!", "Chompy berjaya makan semua buah!"), 700);
     } else if (state._lose) {
-      say("Chompy is stuck. Try again!");           // Audio English
+      say("Chompy is stuck. Try again!");                             // audio English
       bumpSound();
       setTimeout(() => showResult(1, "Cuba Lagi!", "Chompy tidak sampai ke rumah. Semak kod kamu."), 700);
     } else {
-      say("Not finished yet. Add more blocks.");    // Audio English
+      say("Not finished yet. Add more blocks.");                      // audio English
       setTimeout(() => showResult(0, "Belum Selesai", "Tambah lagi blok untuk sampai ke rumah."), 700);
     }
     state.running = false;
@@ -575,10 +580,10 @@
         g[ch.r][ch.c] = TILES.EMPTY;
         state.fruitsLeft--;
         yumSound();
-        say("Yum yum!");                            // Audio English
+        say("Yum yum!");                                    // audio English
       } else {
         tone(220, 0.1);
-        say("No fruit here.");                      // Audio English
+        say("No fruit here.");                              // audio English
       }
       renderBoard();
       return;
@@ -592,14 +597,14 @@
     const nr = ch.r + dr, nc = ch.c + dc;
     if (nr < 0 || nc < 0 || nr >= g.length || nc >= g[0].length) {
       bumpSound();
-      say("Chompy is stuck.");                      // Audio English
+      say("Chompy is stuck.");                              // audio English
       state._lose = true;
       return;
     }
     const target = g[nr][nc];
     if (target === TILES.WALL || target === TILES.ROCK) {
       bumpSound();
-      say("There's an obstacle.");                  // Audio English
+      say("There's an obstacle.");                          // audio English
       state._lose = true;
       return;
     }
@@ -622,7 +627,7 @@
     const name = (store.name || "").trim();
     $("#resultStars").innerHTML = starsHTML(stars);
     $("#resultTitle").textContent = name ? `${title} ${name}!` : title;
-    $("#resultMsg").textContent = msg;
+    $("#resultMsg").textContent = msg;                          // teks BM
     $('[data-action="next"]').textContent =
       state.levelIndex < LEVELS[state.mode].length - 1 ? "Seterusnya ➜" : "Selesai 🏁";
     $("#result").hidden = false;
@@ -636,8 +641,8 @@
       1: "Try again. Check your instructions.",
       2: "Good job. Try again to do better.",
       3: "Well done! Your code worked!",
-    }[stars] || msg;
-    say(`${title}. ${audioMsg}`);
+    }[stars] || "Try again.";
+    say(audioMsg);
   }
 
   function confetti() {
@@ -660,7 +665,6 @@
   // ============================================================
   function showHint() {
     const lv = LEVELS[state.mode][state.levelIndex];
-    // Paparkan hint BM dalam bubble
     const board = $("#board");
     let bubble = board.querySelector(".hint-bubble");
     if (!bubble) {
@@ -668,11 +672,10 @@
       bubble.className = "hint-bubble";
       board.appendChild(bubble);
     }
-    bubble.textContent = "💡 " + lv.hint;
+    bubble.textContent = "💡 " + lv.hint;                      // paparan BM
     bubble.classList.add("show");
     setTimeout(() => bubble.classList.remove("show"), 3500);
-    // Audio English
-    say(lv.hintAudio || lv.hint);
+    say(lv.hintAudio || lv.hint);                              // audio English
   }
 
   // ============================================================
@@ -721,7 +724,7 @@
       case "sound":
         store.sound = !store.sound; save(); refreshSoundButtons();
         if (!store.sound && window.speechSynthesis) speechSynthesis.cancel();
-        if (store.sound) say("Sound on.");           // Audio English
+        if (store.sound) say("Sound on.");                  // audio English
         break;
       case "undo": removeLastBlock(); break;
       case "clear-code": clearCode(); break;
