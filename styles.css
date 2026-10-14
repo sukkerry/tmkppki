@@ -153,6 +153,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--violet); ou
   padding: 8px 16px; border-radius: 999px; font-weight: 800;
   box-shadow: var(--shadow); opacity: 0; transition: opacity .3s ease, transform .3s ease;
   pointer-events: none; z-index: 5; font-size: .9rem;
+  max-width: 90%; text-align: center;
 }
 .hint-bubble.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
