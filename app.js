@@ -9,20 +9,20 @@
     WALL: 1,
     START: 2,
     GOAL: 3,
-    FRUIT: 4,   // buah
-    ROCK: 5,    // halangan
+    FRUIT: 4,
+    ROCK: 5,
   };
 
   const FRUITS = ["🍎", "🍌", "🍉", "🥭", "🍍", "🍊", "🍇", "🍓"];
 
   // ============================================================
   // LEVELS
-  // Grid 6x6. 0=kosong, 1=dinding, 2=mula, 3=rumah, 4=buah, 5=batu
+  // Grid 6x6. 0=empty, 1=wall, 2=start, 3=goal, 4=fruit, 5=rock
   // ============================================================
   const LEVELS = {
-    mudah: [
+    easy: [
       {
-        nama: "Lurus ke Kanan",
+        nama: "Straight Right",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,0,4,1],
@@ -32,10 +32,10 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 5,
-        hint: "Chompy perlu jalan 3 langkah ke kanan untuk makan buah.",
+        hint: "Chompy needs to walk 3 steps to the right to eat the fruit.",
       },
       {
-        nama: "Turun ke Bawah",
+        nama: "Down Below",
         grid: [
           [1,1,1,1,1,1],
           [1,2,1,1,1,1],
@@ -45,10 +45,10 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 5,
-        hint: "Chompy perlu jalan 2 langkah ke bawah.",
+        hint: "Chompy needs to walk 2 steps down.",
       },
       {
-        nama: "Belok Sikit",
+        nama: "Small Turn",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,0,1,1],
@@ -58,10 +58,10 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 8,
-        hint: "Jalan kanan, kanan, bawah, bawah.",
+        hint: "Go right, right, down, down.",
       },
       {
-        nama: "Buah di Tepi",
+        nama: "Fruit at the Edge",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,0,4,1],
@@ -71,12 +71,12 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 5,
-        hint: "Sama seperti tahap 1, tetapi ulang supaya mahir.",
+        hint: "Same as level 1, repeat to master it.",
       },
     ],
-    sederhana: [
+    medium: [
       {
-        nama: "Dua Buah",
+        nama: "Two Fruits",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,4,0,1],
@@ -86,10 +86,10 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 10,
-        hint: "Kumpul buah pertama di kanan, kemudian turun ke buah kedua.",
+        hint: "Collect the first fruit on the right, then go down to the second fruit.",
       },
       {
-        nama: "Ada Batu",
+        nama: "Watch the Rock",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,5,4,1],
@@ -99,10 +99,10 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 12,
-        hint: "Batu tak boleh dilalui. Pusing ikut bawah.",
+        hint: "You cannot pass the rock. Go around the bottom.",
       },
       {
-        nama: "Pusing S",
+        nama: "S Curve",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,4,1,1],
@@ -112,10 +112,10 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 12,
-        hint: "Jalan seperti huruf S.",
+        hint: "Walk like the letter S.",
       },
       {
-        nama: "Rumah Chompy",
+        nama: "Chompy's Home",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,4,0,1],
@@ -125,12 +125,12 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 10,
-        hint: "Makan buah dahulu, kemudian pergi ke rumah 🏠.",
+        hint: "Eat the fruit first, then go home 🏠.",
       },
     ],
-    susah: [
+    hard: [
       {
-        nama: "Labirin Kecil",
+        nama: "Mini Maze",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,1,4,1],
@@ -140,10 +140,10 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 18,
-        hint: "Rancang jalan: kumpul semua buah, elak dinding, sampai rumah.",
+        hint: "Plan the path: collect all fruits, avoid walls, reach home.",
       },
       {
-        nama: "Zig-Zag Buah",
+        nama: "Zig-Zag Fruits",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,4,0,1],
@@ -153,10 +153,10 @@
           [1,3,1,1,4,1],
         ],
         maxBlocks: 22,
-        hint: "Ikut bentuk zig-zag. Setiap buah beri tenaga!",
+        hint: "Follow the zig-zag. Each fruit gives energy!",
       },
       {
-        nama: "Kubu Batu",
+        nama: "Rock Fortress",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,5,0,1],
@@ -166,10 +166,10 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 20,
-        hint: "Batu menghalang. Cari jalan pusing.",
+        hint: "The rock blocks the way. Find a path around.",
       },
       {
-        nama: "Cabaran Hebat",
+        nama: "Big Challenge",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,4,0,1],
@@ -179,12 +179,12 @@
           [1,3,1,1,1,1],
         ],
         maxBlocks: 24,
-        hint: "Ambil masa, fikir langkah satu-satu. Kamu boleh!",
+        hint: "Take your time, think step by step. You can do it!",
       },
     ],
-    bebas: [
+    free: [
       {
-        nama: "Cipta Sendiri",
+        nama: "Create Your Own",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,0,0,1],
@@ -194,7 +194,7 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 99,
-        hint: "Guru boleh ubah peta. Murid cuba cari jalan sendiri.",
+        hint: "Teachers can modify the map. Students find their own path.",
         free: true,
       },
     ],
@@ -204,25 +204,25 @@
   // MODES
   // ============================================================
   const MODES = {
-    mudah:      { title: "Tahap Mudah",     hint: "Pilih peta. Susun blok arahan untuk gerakkan Chompy.", color: "#4CB944" },
-    sederhana:  { title: "Tahap Sederhana", hint: "Ada buah banyak dan halangan. Fikir langkah dengan teliti.", color: "#F5B700" },
-    susah:      { title: "Tahap Susah",     hint: "Labirin dan banyak buah. Cabaran untuk otak!", color: "#FF6B4A" },
-    bebas:      { title: "Mod Bebas",       hint: "Cipta jalan sendiri. Guru boleh ubah peta dalam kod.", color: "#7B5CFF" },
+    easy:   { title: "Easy Level",   hint: "Pick a map. Arrange blocks to move Chompy.", color: "#4CB944" },
+    medium: { title: "Medium Level", hint: "More fruits and obstacles. Think carefully.", color: "#F5B700" },
+    hard:   { title: "Hard Level",   hint: "Maze with many fruits. A real brain challenge!", color: "#FF6B4A" },
+    free:   { title: "Free Play",    hint: "Design your own path. Teachers can edit the map in code.", color: "#7B5CFF" },
   };
 
-  // Blok arahan
+  // Instruction blocks
   const BLOCKS = [
-    { id: "up",    label: "Atas",  icon: "⬆️", color: "#7B5CFF" },
-    { id: "down",  label: "Bawah", icon: "⬇️", color: "#13A89E" },
-    { id: "left",  label: "Kiri",  icon: "⬅️", color: "#FF6B4A" },
-    { id: "right", label: "Kanan", icon: "➡️", color: "#4CB944" },
-    { id: "eat",   label: "Makan", icon: "😋", color: "#F5B700" },
+    { id: "up",    label: "Up",    icon: "⬆️", color: "#7B5CFF" },
+    { id: "down",  label: "Down",  icon: "⬇️", color: "#13A89E" },
+    { id: "left",  label: "Left",  icon: "⬅️", color: "#FF6B4A" },
+    { id: "right", label: "Right", icon: "➡️", color: "#4CB944" },
+    { id: "eat",   label: "Eat",   icon: "😋", color: "#F5B700" },
   ];
 
   // ============================================================
   // STORAGE
   // ============================================================
-  const STORE_KEY = "chompy-buah-01";
+  const STORE_KEY = "chompy-fruits-01";
   const store = (() => {
     try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; }
   })();
@@ -237,7 +237,7 @@
   };
 
   // ============================================================
-  // AUDIO — Bahasa Malaysia
+  // AUDIO
   // ============================================================
   let actx;
   function tone(freq, dur = 0.12, type = "triangle", delay = 0, vol = 0.18) {
@@ -261,31 +261,30 @@
   const winSound = () => { [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, 0.2, "triangle", i * 0.1, 0.2)); };
 
   let voice = null;
-  function pickMalayVoice() {
+  function pickVoice() {
     if (!window.speechSynthesis) return;
     const vs = speechSynthesis.getVoices();
     if (!vs.length) return;
     voice =
-      vs.find((v) => /^ms[-_]MY/i.test(v.lang)) ||
-      vs.find((v) => /^ms/i.test(v.lang)) ||
-      vs.find((v) => /^id[-_]ID/i.test(v.lang)) ||
-      vs.find((v) => /^id/i.test(v.lang)) ||
+      vs.find((v) => /^en[-_]GB/i.test(v.lang)) ||
+      vs.find((v) => /^en[-_]US/i.test(v.lang)) ||
+      vs.find((v) => /^en/i.test(v.lang)) ||
       vs.find((v) => v.default) ||
       vs[0];
   }
   if (window.speechSynthesis) {
-    pickMalayVoice();
-    speechSynthesis.onvoiceschanged = pickMalayVoice;
-    setTimeout(pickMalayVoice, 500);
+    pickVoice();
+    speechSynthesis.onvoiceschanged = pickVoice;
+    setTimeout(pickVoice, 500);
   }
   function say(text) {
     if (!store.sound || !window.speechSynthesis) return;
     try {
       speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = "ms-MY";
+      u.lang = "en-GB";
       if (voice) u.voice = voice;
-      u.rate = 0.9; u.pitch = 1.15;
+      u.rate = 0.95; u.pitch = 1.15;
       speechSynthesis.speak(u);
     } catch {}
   }
@@ -299,7 +298,7 @@
     } catch {}
     if (window.speechSynthesis) {
       const u = new SpeechSynthesisUtterance("");
-      u.lang = "ms-MY";
+      u.lang = "en-GB";
       speechSynthesis.speak(u);
     }
   }
@@ -336,18 +335,20 @@
   const state = {
     mode: null,
     levelIndex: 0,
-    grid: [],        // salinan grid semasa
+    grid: [],
     start: { r: 0, c: 0 },
     chompy: { r: 0, c: 0, dir: "right" },
     fruitsLeft: 0,
     code: [],
     running: false,
+    _win: false,
+    _lose: false,
   };
 
   function cloneGrid(g) { return g.map((row) => [...row]); }
 
   // ============================================================
-  // LEVELS
+  // LEVELS SCREEN
   // ============================================================
   function openLevels(mode) {
     state.mode = mode;
@@ -385,8 +386,9 @@
     state.grid = cloneGrid(lv.grid);
     state.code = [];
     state.running = false;
+    state._win = false;
+    state._lose = false;
 
-    // cari posisi mula & buah
     state.fruitsLeft = 0;
     for (let r = 0; r < state.grid.length; r++) {
       for (let c = 0; c < state.grid[r].length; c++) {
@@ -410,7 +412,7 @@
   }
 
   // ============================================================
-  // RENDER PALETTE
+  // PALETTE
   // ============================================================
   function renderPalette() {
     const p = $("#palette");
@@ -422,7 +424,7 @@
   }
 
   // ============================================================
-  // RENDER BOARD
+  // BOARD
   // ============================================================
   function renderBoard() {
     const board = $("#board");
@@ -458,7 +460,7 @@
   function addBlock(id) {
     const lv = LEVELS[state.mode][state.levelIndex];
     if (state.code.length >= lv.maxBlocks) {
-      say("Kod sudah penuh.");
+      say("Code is full.");
       return;
     }
     state.code.push(id);
@@ -486,7 +488,7 @@
   function renderCode() {
     const list = $("#codeList");
     if (!state.code.length) {
-      list.innerHTML = `<p class="code-empty">Tekan blok di bawah untuk tambah arahan ⬇️</p>`;
+      list.innerHTML = `<p class="code-empty">Tap a block below to add an instruction ⬇️</p>`;
       return;
     }
     list.innerHTML = state.code.map((id, i) => {
@@ -504,13 +506,14 @@
   // ============================================================
   async function runCode() {
     if (state.running) return;
-    if (!state.code.length) { say("Susun blok dahulu."); return; }
+    if (!state.code.length) { say("Add some blocks first."); return; }
     state.running = true;
-    // reset Chompy ke posisi mula
+    state._win = false;
+    state._lose = false;
     state.chompy = { r: state.start.r, c: state.start.c, dir: "right" };
+    renderBoard();
 
     for (let i = 0; i < state.code.length; i++) {
-      // sorot blok semasa
       $$(".code-item").forEach((el, idx) => el.classList.toggle("active", idx === i));
       await doAction(state.code[i]);
       await sleep(280);
@@ -518,23 +521,20 @@
     }
     $$(".code-item").forEach((el) => el.classList.remove("active"));
 
-    // semak menang / kalah
     if (state._win) {
       winSound();
-      say("Syabas! Chompy kenyang!");
+      say("Well done! Chompy is full!");
       setStars(state.mode, "L" + state.levelIndex, 3);
       confetti();
-      setTimeout(() => showResult(3, "Syabas!", "Chompy berjaya makan semua buah!"), 700);
+      setTimeout(() => showResult(3, "Well done!", "Chompy ate all the fruits!"), 700);
     } else if (state._lose) {
-      say("Chompy tersekat. Cuba lagi!");
+      say("Chompy is stuck. Try again!");
       bumpSound();
-      setTimeout(() => showResult(1, "Cuba Lagi!", "Chompy tidak sampai ke rumah. Semak kod kamu."), 700);
+      setTimeout(() => showResult(1, "Try Again!", "Chompy did not reach home. Check your code."), 700);
     } else {
-      say("Belum selesai. Tambah lagi blok.");
-      setTimeout(() => showResult(0, "Belum Selesai", "Tambah lagi blok untuk sampai ke rumah."), 700);
+      say("Not finished yet. Add more blocks.");
+      setTimeout(() => showResult(0, "Not Finished", "Add more blocks to reach home."), 700);
     }
-    state._win = false;
-    state._lose = false;
     state.running = false;
   }
 
@@ -544,20 +544,18 @@
     const g = state.grid;
     const ch = state.chompy;
     if (action === "eat") {
-      // Makan buah di posisi semasa (jika ada)
       if (g[ch.r][ch.c] === TILES.FRUIT) {
         g[ch.r][ch.c] = TILES.EMPTY;
         state.fruitsLeft--;
         yumSound();
-        say("Nyam nyam!");
+        say("Yum yum!");
       } else {
         tone(220, 0.1);
-        say("Tiada buah di sini.");
+        say("No fruit here.");
       }
       renderBoard();
       return;
     }
-    // gerakan
     let dr = 0, dc = 0;
     if (action === "up") { dr = -1; ch.dir = "up"; }
     if (action === "down") { dr = 1; ch.dir = "down"; }
@@ -567,29 +565,24 @@
     const nr = ch.r + dr, nc = ch.c + dc;
     if (nr < 0 || nc < 0 || nr >= g.length || nc >= g[0].length) {
       bumpSound();
-      say("Chompy tersekat.");
+      say("Chompy is stuck.");
       state._lose = true;
       return;
     }
     const target = g[nr][nc];
     if (target === TILES.WALL || target === TILES.ROCK) {
       bumpSound();
-      say("Ada halangan.");
+      say("There's an obstacle.");
       state._lose = true;
       return;
     }
-    // bergerak
     ch.r = nr; ch.c = nc;
     stepSound();
     renderBoard();
 
-    // auto makan buah jika pijak
     if (target === TILES.FRUIT) {
-      // makan otomatik bila pijak? Tidak — murid perlu tekan "Makan".
-      // Tetapi kita bagi audio rangsangan.
       tone(1047, 0.1);
     }
-    // semak jika sudah di rumah
     if (target === TILES.GOAL && state.fruitsLeft === 0) {
       state._win = true;
     }
@@ -599,10 +592,10 @@
   // RESULT
   // ============================================================
   const PRAISE = [
-    ["Belum Selesai", "Jom cuba lagi. Tambah blok untuk selesaikan."],
-    ["Cuba Lagi!", "Hampir berjaya. Semak arahan kamu."],
-    ["Bagus!", "Kamu sudah mencuba. Cuba lagi untuk jadi lebih baik."],
-    ["Syabas!", "Cemerlang! Kod kamu berjaya!"],
+    ["Not Finished", "Let's try again. Add more blocks to finish."],
+    ["Try Again!", "Almost there. Check your instructions."],
+    ["Good!", "You tried. Try again to do better."],
+    ["Well done!", "Excellent! Your code worked!"],
   ];
 
   function showResult(stars, title, msg) {
@@ -611,7 +604,7 @@
     $("#resultTitle").textContent = name ? `${title} ${name}!` : title;
     $("#resultMsg").textContent = msg;
     $('[data-action="next"]').textContent =
-      state.levelIndex < LEVELS[state.mode].length - 1 ? "Seterusnya ➜" : "Selesai 🏁";
+      state.levelIndex < LEVELS[state.mode].length - 1 ? "Next ➜" : "Done 🏁";
     $("#result").hidden = false;
     if (stars >= 3) {
       fanfare(3);
@@ -641,7 +634,6 @@
   function showHint() {
     const lv = LEVELS[state.mode][state.levelIndex];
     say(lv.hint);
-    // tunjuk hint bubble
     const board = $("#board");
     let bubble = board.querySelector(".hint-bubble");
     if (!bubble) {
@@ -655,7 +647,7 @@
   }
 
   // ============================================================
-  // GURU
+  // TEACHER PANEL
   // ============================================================
   function openGuru() {
     const name = (store.name || "").trim();
@@ -669,7 +661,7 @@
       });
     });
     $("#recordTable").innerHTML =
-      `<thead><tr><th>Tahap</th>${modes.map((m) => `<th>${MODES[m].title}</th>`).join("")}</tr></thead>` +
+      `<thead><tr><th>Level</th>${modes.map((m) => `<th>${MODES[m].title}</th>`).join("")}</tr></thead>` +
       `<tbody>${rows.join("")}</tbody>`;
     $("#guru").hidden = false;
   }
@@ -681,7 +673,6 @@
   nameInput.value = store.name || "";
   nameInput.addEventListener("input", () => { store.name = nameInput.value; save(); });
 
-  // Klik blok palette
   $("#palette").addEventListener("click", (e) => {
     const b = e.target.closest("[data-block]");
     if (!b || state.running) return;
@@ -701,7 +692,7 @@
       case "sound":
         store.sound = !store.sound; save(); refreshSoundButtons();
         if (!store.sound && window.speechSynthesis) speechSynthesis.cancel();
-        if (store.sound) say("Bunyi dihidupkan.");
+        if (store.sound) say("Sound on.");
         break;
       case "undo": removeLastBlock(); break;
       case "clear-code": clearCode(); break;
@@ -717,7 +708,7 @@
       case "guru": openGuru(); break;
       case "close-guru": $("#guru").hidden = true; break;
       case "reset-record":
-        if (confirm("Padam semua rekod bintang?")) {
+        if (confirm("Reset all star records?")) {
           store.progress = {}; save(); openGuru(); refreshHome();
         }
         break;
