@@ -1,1 +1,167 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Chompy Makan Buah – Block Coding untuk Kanak-kanak</title>
+  <meta name="description" content="Permainan block coding Bahasa Malaysia untuk kanak-kanak. Susun arahan, gerakkan Chompy untuk makan buah-buahan tempatan Malaysia." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ===================== HOME ===================== -->
+  <section id="home" class="screen active" aria-labelledby="judul">
+    <header class="topbar">
+      <span class="badge">🐵 Block Coding · Bahasa Malaysia</span>
+      <div class="topbar-actions">
+        <button class="icon-btn" data-action="sound" aria-label="Bunyi hidup/mati">🔊</button>
+        <button class="pill-btn" data-action="guru">👩‍🏫 Untuk Guru</button>
+      </div>
+    </header>
 
+    <div class="hero">
+      <div class="hero-text">
+        <h1 id="judul">Chompy <span class="scribble">Makan Buah</span></h1>
+        <p class="lead">Susun blok arahan untuk gerakkan Chompy. Kumpul semua buah tempatan Malaysia, elak halangan!</p>
+        <label class="name-field">
+          <span>Nama saya:</span>
+          <input id="studentName" type="text" maxlength="24" placeholder="Tulis nama" autocomplete="off" />
+        </label>
+      </div>
+      <svg class="hero-art" viewBox="0 0 320 220" aria-hidden="true">
+        <circle cx="160" cy="110" r="90" fill="#FFE8B0" stroke="#1F2A44" stroke-width="4"/>
+        <text x="160" y="148" font-size="110" text-anchor="middle">🐵</text>
+      </svg>
+    </div>
+
+    <div class="mode-grid">
+      <button class="mode-card" data-mode="mudah" style="--c: var(--leaf)">
+        <span class="mode-num">1</span>
+        <span class="mode-icon" aria-hidden="true">🌱</span>
+        <span class="mode-title">Tahap Mudah</span>
+        <span class="mode-desc">1 buah · jalan lurus</span>
+        <span class="mode-stars" data-stars-for="mudah"></span>
+      </button>
+      <button class="mode-card" data-mode="sederhana" style="--c: var(--sun)">
+        <span class="mode-num">2</span>
+        <span class="mode-icon" aria-hidden="true">🌳</span>
+        <span class="mode-title">Tahap Sederhana</span>
+        <span class="mode-desc">2-3 buah · ada halangan</span>
+        <span class="mode-stars" data-stars-for="sederhana"></span>
+      </button>
+      <button class="mode-card" data-mode="susah" style="--c: var(--tomato)">
+        <span class="mode-num">3</span>
+        <span class="mode-icon" aria-hidden="true">🌋</span>
+        <span class="mode-title">Tahap Susah</span>
+        <span class="mode-desc">Banyak buah · pusing jalan</span>
+        <span class="mode-stars" data-stars-for="susah"></span>
+      </button>
+      <button class="mode-card" data-mode="bebas" style="--c: var(--violet)">
+        <span class="mode-num">4</span>
+        <span class="mode-icon" aria-hidden="true">🎨</span>
+        <span class="mode-title">Mod Bebas</span>
+        <span class="mode-desc">Cipta peta sendiri</span>
+        <span class="mode-stars" data-stars-for="bebas"></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===================== LEVELS ===================== -->
+  <section id="levels" class="screen" aria-labelledby="levelsTitle">
+    <header class="topbar">
+      <button class="pill-btn" data-action="home">⬅ Menu</button>
+      <h2 id="levelsTitle" class="screen-title"></h2>
+      <button class="icon-btn" data-action="sound" aria-label="Bunyi hidup/mati">🔊</button>
+    </header>
+    <p class="levels-hint" id="levelsHint"></p>
+    <div class="level-grid" id="levelGrid"></div>
+  </section>
+
+  <!-- ===================== PLAY ===================== -->
+  <section id="play" class="screen" aria-labelledby="playTitle">
+    <header class="topbar">
+      <button class="pill-btn" data-action="levels">⬅ Tahap</button>
+      <div class="play-heading">
+        <h2 id="playTitle" class="screen-title"></h2>
+        <p id="playInstruction" class="instruction"></p>
+      </div>
+      <button class="icon-btn" data-action="sound" aria-label="Bunyi hidup/mati">🔊</button>
+    </header>
+
+    <div class="play-layout">
+      <!-- Papan permainan -->
+      <div class="board-wrap">
+        <div class="board" id="board" role="grid" aria-label="Papan permainan"></div>
+        <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <!-- Panel kod -->
+      <aside class="code-panel">
+        <h3>Kod Saya</h3>
+        <div class="code-list" id="codeList" aria-label="Senarai blok kod"></div>
+        <p class="code-count"><span id="blockCount">0</span> blok</p>
+        <div class="code-actions">
+          <button class="tool-btn small" data-action="undo">↶ Buang</button>
+          <button class="tool-btn small" data-action="clear-code">🗑 Kosong</button>
+          <button class="tool-btn primary" data-action="run">▶ Jalankan</button>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Blok arahan tersedia -->
+    <footer class="toolbar">
+      <div class="blocks-palette" id="palette" role="toolbar" aria-label="Blok arahan"></div>
+      <div class="tool-actions">
+        <button class="tool-btn" data-action="reset">🔁 Reset Peta</button>
+        <button class="tool-btn" data-action="hint">💡 Petunjuk</button>
+      </div>
+    </footer>
+  </section>
+
+  <!-- ===================== RESULT ===================== -->
+  <div class="overlay" id="result" hidden>
+    <div class="result-card" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+      <div class="result-stars" id="resultStars"></div>
+      <h2 id="resultTitle"></h2>
+      <p id="resultMsg"></p>
+      <div class="result-actions">
+        <button class="tool-btn" data-action="retry">🔁 Ulang</button>
+        <button class="tool-btn primary" data-action="next">Seterusnya ➜</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== GURU ===================== -->
+  <div class="overlay" id="guru" hidden>
+    <div class="guru-card" role="dialog" aria-modal="true" aria-labelledby="guruTitle">
+      <button class="close-btn" data-action="close-guru" aria-label="Tutup">✕</button>
+      <h2 id="guruTitle">Maklumat Guru</h2>
+      <dl class="guru-info">
+        <dt>Subjek</dt><dd>Teknologi Maklumat dan Komunikasi (TMK) / Sains Komputer / Literasi Digital</dd>
+        <dt>Topik</dt><dd>Asas Pengekodan Blok (Block Coding) — Urutan Arahan</dd>
+        <dt>Kemahiran</dt><dd>Pemikiran Komputasional: urutan, arah, penyelesaian masalah</dd>
+        <dt>Cadangan penggunaan</dt>
+        <dd>
+          <ol type="1">
+            <li>Mulakan dengan <b>Tahap Mudah</b> — murid kenal arah (atas, bawah, kiri, kanan).</li>
+            <li>Naik ke <b>Tahap Sederhana</b> — perkenalkan halangan dan pusing.</li>
+            <li>Cabaran <b>Tahap Susah</b> — perlu rancang urutan yang lebih panjang.</li>
+            <li>Gunakan <b>Mod Bebas</b> untuk murid cipta peta sendiri (kreativiti).</li>
+          </ol>
+        </dd>
+      </dl>
+
+      <h3>Rekod Pencapaian <span id="guruStudent"></span></h3>
+      <div class="table-scroll">
+        <table class="record" id="recordTable"></table>
+      </div>
+      <button class="pill-btn danger" data-action="reset-record">🗑 Set semula rekod</button>
+    </div>
+  </div>
+
+  <div id="confetti" aria-hidden="true"></div>
+  <script src="app.js"></script>
+</body>
+</html>
