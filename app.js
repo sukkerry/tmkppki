@@ -17,12 +17,11 @@
 
   // ============================================================
   // LEVELS
-  // Grid 6x6. 0=empty, 1=wall, 2=start, 3=goal, 4=fruit, 5=rock
   // ============================================================
   const LEVELS = {
-    easy: [
+    mudah: [
       {
-        nama: "Straight Right",
+        nama: "Lurus ke Kanan",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,0,4,1],
@@ -32,10 +31,13 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 5,
-        hint: "Chompy needs to walk 3 steps to the right to eat the fruit.",
+        // Teks BM untuk UI
+        hint: "Chompy perlu jalan 3 langkah ke kanan untuk makan buah.",
+        // Teks English untuk AUDIO sahaja
+        hintAudio: "Chompy needs to walk three steps to the right to eat the fruit.",
       },
       {
-        nama: "Down Below",
+        nama: "Turun ke Bawah",
         grid: [
           [1,1,1,1,1,1],
           [1,2,1,1,1,1],
@@ -45,10 +47,11 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 5,
-        hint: "Chompy needs to walk 2 steps down.",
+        hint: "Chompy perlu jalan 2 langkah ke bawah.",
+        hintAudio: "Chompy needs to walk two steps down.",
       },
       {
-        nama: "Small Turn",
+        nama: "Belok Sikit",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,0,1,1],
@@ -58,10 +61,11 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 8,
-        hint: "Go right, right, down, down.",
+        hint: "Jalan kanan, kanan, bawah, bawah.",
+        hintAudio: "Go right, right, down, down.",
       },
       {
-        nama: "Fruit at the Edge",
+        nama: "Buah di Tepi",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,0,4,1],
@@ -71,12 +75,13 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 5,
-        hint: "Same as level 1, repeat to master it.",
+        hint: "Sama seperti tahap 1, tetapi ulang supaya mahir.",
+        hintAudio: "Same as level one. Repeat to master it.",
       },
     ],
-    medium: [
+    sederhana: [
       {
-        nama: "Two Fruits",
+        nama: "Dua Buah",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,4,0,1],
@@ -86,10 +91,11 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 10,
-        hint: "Collect the first fruit on the right, then go down to the second fruit.",
+        hint: "Kumpul buah pertama di kanan, kemudian turun ke buah kedua.",
+        hintAudio: "Collect the first fruit on the right, then go down to the second fruit.",
       },
       {
-        nama: "Watch the Rock",
+        nama: "Ada Batu",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,5,4,1],
@@ -99,10 +105,11 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 12,
-        hint: "You cannot pass the rock. Go around the bottom.",
+        hint: "Batu tak boleh dilalui. Pusing ikut bawah.",
+        hintAudio: "You cannot pass the rock. Go around the bottom.",
       },
       {
-        nama: "S Curve",
+        nama: "Pusing S",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,4,1,1],
@@ -112,10 +119,11 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 12,
-        hint: "Walk like the letter S.",
+        hint: "Jalan seperti huruf S.",
+        hintAudio: "Walk like the letter S.",
       },
       {
-        nama: "Chompy's Home",
+        nama: "Rumah Chompy",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,4,0,1],
@@ -125,12 +133,13 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 10,
-        hint: "Eat the fruit first, then go home 🏠.",
+        hint: "Makan buah dahulu, kemudian pergi ke rumah 🏠.",
+        hintAudio: "Eat the fruit first, then go home.",
       },
     ],
-    hard: [
+    susah: [
       {
-        nama: "Mini Maze",
+        nama: "Labirin Kecil",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,1,4,1],
@@ -140,10 +149,11 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 18,
-        hint: "Plan the path: collect all fruits, avoid walls, reach home.",
+        hint: "Rancang jalan: kumpul semua buah, elak dinding, sampai rumah.",
+        hintAudio: "Plan the path: collect all fruits, avoid walls, reach home.",
       },
       {
-        nama: "Zig-Zag Fruits",
+        nama: "Zig-Zag Buah",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,4,0,1],
@@ -153,10 +163,11 @@
           [1,3,1,1,4,1],
         ],
         maxBlocks: 22,
-        hint: "Follow the zig-zag. Each fruit gives energy!",
+        hint: "Ikut bentuk zig-zag. Setiap buah beri tenaga!",
+        hintAudio: "Follow the zig-zag. Each fruit gives energy.",
       },
       {
-        nama: "Rock Fortress",
+        nama: "Kubu Batu",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,5,0,1],
@@ -166,10 +177,11 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 20,
-        hint: "The rock blocks the way. Find a path around.",
+        hint: "Batu menghalang. Cari jalan pusing.",
+        hintAudio: "The rock blocks the way. Find a path around.",
       },
       {
-        nama: "Big Challenge",
+        nama: "Cabaran Hebat",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,4,0,1],
@@ -179,12 +191,13 @@
           [1,3,1,1,1,1],
         ],
         maxBlocks: 24,
-        hint: "Take your time, think step by step. You can do it!",
+        hint: "Ambil masa, fikir langkah satu-satu. Kamu boleh!",
+        hintAudio: "Take your time, think step by step. You can do it.",
       },
     ],
-    free: [
+    bebas: [
       {
-        nama: "Create Your Own",
+        nama: "Cipta Sendiri",
         grid: [
           [1,1,1,1,1,1],
           [1,2,0,0,0,1],
@@ -194,7 +207,8 @@
           [1,1,1,1,1,1],
         ],
         maxBlocks: 99,
-        hint: "Teachers can modify the map. Students find their own path.",
+        hint: "Guru boleh ubah peta. Murid cuba cari jalan sendiri.",
+        hintAudio: "Teachers can change the map. Students find their own path.",
         free: true,
       },
     ],
@@ -204,25 +218,25 @@
   // MODES
   // ============================================================
   const MODES = {
-    easy:   { title: "Easy Level",   hint: "Pick a map. Arrange blocks to move Chompy.", color: "#4CB944" },
-    medium: { title: "Medium Level", hint: "More fruits and obstacles. Think carefully.", color: "#F5B700" },
-    hard:   { title: "Hard Level",   hint: "Maze with many fruits. A real brain challenge!", color: "#FF6B4A" },
-    free:   { title: "Free Play",    hint: "Design your own path. Teachers can edit the map in code.", color: "#7B5CFF" },
+    mudah:     { title: "Tahap Mudah",     hint: "Pilih peta. Susun blok arahan untuk gerakkan Chompy.", color: "#4CB944" },
+    sederhana: { title: "Tahap Sederhana", hint: "Ada buah banyak dan halangan. Fikir langkah dengan teliti.", color: "#F5B700" },
+    susah:     { title: "Tahap Susah",     hint: "Labirin dan banyak buah. Cabaran untuk otak!", color: "#FF6B4A" },
+    bebas:     { title: "Mod Bebas",       hint: "Cipta jalan sendiri. Guru boleh ubah peta dalam kod.", color: "#7B5CFF" },
   };
 
-  // Instruction blocks
+  // Blok arahan — teks BM, tetapi audio English
   const BLOCKS = [
-    { id: "up",    label: "Up",    icon: "⬆️", color: "#7B5CFF" },
-    { id: "down",  label: "Down",  icon: "⬇️", color: "#13A89E" },
-    { id: "left",  label: "Left",  icon: "⬅️", color: "#FF6B4A" },
-    { id: "right", label: "Right", icon: "➡️", color: "#4CB944" },
-    { id: "eat",   label: "Eat",   icon: "😋", color: "#F5B700" },
+    { id: "up",    label: "Atas",  icon: "⬆️", color: "#7B5CFF", audio: "Up" },
+    { id: "down",  label: "Bawah", icon: "⬇️", color: "#13A89E", audio: "Down" },
+    { id: "left",  label: "Kiri",  icon: "⬅️", color: "#FF6B4A", audio: "Left" },
+    { id: "right", label: "Kanan", icon: "➡️", color: "#4CB944", audio: "Right" },
+    { id: "eat",   label: "Makan", icon: "😋", color: "#F5B700", audio: "Eat" },
   ];
 
   // ============================================================
   // STORAGE
   // ============================================================
-  const STORE_KEY = "chompy-fruits-01";
+  const STORE_KEY = "chompy-buah-01";
   const store = (() => {
     try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; }
   })();
@@ -237,7 +251,7 @@
   };
 
   // ============================================================
-  // AUDIO
+  // AUDIO — Speech synthesis dalam BAHASA INGGERIS
   // ============================================================
   let actx;
   function tone(freq, dur = 0.12, type = "triangle", delay = 0, vol = 0.18) {
@@ -260,34 +274,46 @@
   const bumpSound = () => tone(150, 0.15, "sawtooth", 0, 0.15);
   const winSound = () => { [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, 0.2, "triangle", i * 0.1, 0.2)); };
 
+  // ------------------------------------------------------------
+  // English voice picker (priority: en-GB > en-US > en > default)
+  // ------------------------------------------------------------
   let voice = null;
-  function pickVoice() {
+  function pickEnglishVoice() {
     if (!window.speechSynthesis) return;
     const vs = speechSynthesis.getVoices();
     if (!vs.length) return;
     voice =
       vs.find((v) => /^en[-_]GB/i.test(v.lang)) ||
       vs.find((v) => /^en[-_]US/i.test(v.lang)) ||
+      vs.find((v) => /^en[-_]AU/i.test(v.lang)) ||
       vs.find((v) => /^en/i.test(v.lang)) ||
       vs.find((v) => v.default) ||
       vs[0];
+    console.log("[Chompy] Voice:", voice ? `${voice.name} (${voice.lang})` : "none");
   }
   if (window.speechSynthesis) {
-    pickVoice();
-    speechSynthesis.onvoiceschanged = pickVoice;
-    setTimeout(pickVoice, 500);
+    pickEnglishVoice();
+    speechSynthesis.onvoiceschanged = pickEnglishVoice;
+    setTimeout(pickEnglishVoice, 500);
+    setTimeout(pickEnglishVoice, 1500);
   }
+
+  // Fungsi utama untuk ucap — sentiasa ENGLISH
   function say(text) {
     if (!store.sound || !window.speechSynthesis) return;
     try {
       speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = "en-GB";
+      u.lang = "en-GB";                 // <-- ENGLISH sahaja
       if (voice) u.voice = voice;
-      u.rate = 0.95; u.pitch = 1.15;
+      u.rate = 0.95;
+      u.pitch = 1.1;
+      u.volume = 1;
       speechSynthesis.speak(u);
     } catch {}
   }
+
+  // Warm up audio on first user interaction
   let audioWarmed = false;
   function warmAudio() {
     if (audioWarmed) return;
@@ -408,7 +434,8 @@
     renderBoard();
     renderCode();
     show("play");
-    say(lv.hint);
+    // Audio dalam ENGLISH
+    say(lv.hintAudio || lv.hint);
   }
 
   // ============================================================
@@ -460,7 +487,7 @@
   function addBlock(id) {
     const lv = LEVELS[state.mode][state.levelIndex];
     if (state.code.length >= lv.maxBlocks) {
-      say("Code is full.");
+      say("Code is full.");           // Audio English
       return;
     }
     state.code.push(id);
@@ -488,7 +515,7 @@
   function renderCode() {
     const list = $("#codeList");
     if (!state.code.length) {
-      list.innerHTML = `<p class="code-empty">Tap a block below to add an instruction ⬇️</p>`;
+      list.innerHTML = `<p class="code-empty">Tekan blok di bawah untuk tambah arahan ⬇️</p>`;
       return;
     }
     list.innerHTML = state.code.map((id, i) => {
@@ -523,17 +550,17 @@
 
     if (state._win) {
       winSound();
-      say("Well done! Chompy is full!");
+      say("Well done! Chompy is full!");           // Audio English
       setStars(state.mode, "L" + state.levelIndex, 3);
       confetti();
-      setTimeout(() => showResult(3, "Well done!", "Chompy ate all the fruits!"), 700);
+      setTimeout(() => showResult(3, "Syabas!", "Chompy berjaya makan semua buah!"), 700);
     } else if (state._lose) {
-      say("Chompy is stuck. Try again!");
+      say("Chompy is stuck. Try again!");           // Audio English
       bumpSound();
-      setTimeout(() => showResult(1, "Try Again!", "Chompy did not reach home. Check your code."), 700);
+      setTimeout(() => showResult(1, "Cuba Lagi!", "Chompy tidak sampai ke rumah. Semak kod kamu."), 700);
     } else {
-      say("Not finished yet. Add more blocks.");
-      setTimeout(() => showResult(0, "Not Finished", "Add more blocks to reach home."), 700);
+      say("Not finished yet. Add more blocks.");    // Audio English
+      setTimeout(() => showResult(0, "Belum Selesai", "Tambah lagi blok untuk sampai ke rumah."), 700);
     }
     state.running = false;
   }
@@ -548,10 +575,10 @@
         g[ch.r][ch.c] = TILES.EMPTY;
         state.fruitsLeft--;
         yumSound();
-        say("Yum yum!");
+        say("Yum yum!");                            // Audio English
       } else {
         tone(220, 0.1);
-        say("No fruit here.");
+        say("No fruit here.");                      // Audio English
       }
       renderBoard();
       return;
@@ -565,14 +592,14 @@
     const nr = ch.r + dr, nc = ch.c + dc;
     if (nr < 0 || nc < 0 || nr >= g.length || nc >= g[0].length) {
       bumpSound();
-      say("Chompy is stuck.");
+      say("Chompy is stuck.");                      // Audio English
       state._lose = true;
       return;
     }
     const target = g[nr][nc];
     if (target === TILES.WALL || target === TILES.ROCK) {
       bumpSound();
-      say("There's an obstacle.");
+      say("There's an obstacle.");                  // Audio English
       state._lose = true;
       return;
     }
@@ -589,28 +616,28 @@
   }
 
   // ============================================================
-  // RESULT
+  // RESULT — teks BM, audio English
   // ============================================================
-  const PRAISE = [
-    ["Not Finished", "Let's try again. Add more blocks to finish."],
-    ["Try Again!", "Almost there. Check your instructions."],
-    ["Good!", "You tried. Try again to do better."],
-    ["Well done!", "Excellent! Your code worked!"],
-  ];
-
   function showResult(stars, title, msg) {
     const name = (store.name || "").trim();
     $("#resultStars").innerHTML = starsHTML(stars);
     $("#resultTitle").textContent = name ? `${title} ${name}!` : title;
     $("#resultMsg").textContent = msg;
     $('[data-action="next"]').textContent =
-      state.levelIndex < LEVELS[state.mode].length - 1 ? "Next ➜" : "Done 🏁";
+      state.levelIndex < LEVELS[state.mode].length - 1 ? "Seterusnya ➜" : "Selesai 🏁";
     $("#result").hidden = false;
     if (stars >= 3) {
       fanfare(3);
       confetti();
     }
-    say(`${title} ${name}. ${msg}`);
+    // Audio English untuk result
+    const audioMsg = {
+      0: "Not finished. Add more blocks to finish.",
+      1: "Try again. Check your instructions.",
+      2: "Good job. Try again to do better.",
+      3: "Well done! Your code worked!",
+    }[stars] || msg;
+    say(`${title}. ${audioMsg}`);
   }
 
   function confetti() {
@@ -629,11 +656,11 @@
   }
 
   // ============================================================
-  // HINT
+  // HINT — teks BM, audio English
   // ============================================================
   function showHint() {
     const lv = LEVELS[state.mode][state.levelIndex];
-    say(lv.hint);
+    // Paparkan hint BM dalam bubble
     const board = $("#board");
     let bubble = board.querySelector(".hint-bubble");
     if (!bubble) {
@@ -644,6 +671,8 @@
     bubble.textContent = "💡 " + lv.hint;
     bubble.classList.add("show");
     setTimeout(() => bubble.classList.remove("show"), 3500);
+    // Audio English
+    say(lv.hintAudio || lv.hint);
   }
 
   // ============================================================
@@ -661,7 +690,7 @@
       });
     });
     $("#recordTable").innerHTML =
-      `<thead><tr><th>Level</th>${modes.map((m) => `<th>${MODES[m].title}</th>`).join("")}</tr></thead>` +
+      `<thead><tr><th>Tahap</th>${modes.map((m) => `<th>${MODES[m].title}</th>`).join("")}</tr></thead>` +
       `<tbody>${rows.join("")}</tbody>`;
     $("#guru").hidden = false;
   }
@@ -692,7 +721,7 @@
       case "sound":
         store.sound = !store.sound; save(); refreshSoundButtons();
         if (!store.sound && window.speechSynthesis) speechSynthesis.cancel();
-        if (store.sound) say("Sound on.");
+        if (store.sound) say("Sound on.");           // Audio English
         break;
       case "undo": removeLastBlock(); break;
       case "clear-code": clearCode(); break;
@@ -708,7 +737,7 @@
       case "guru": openGuru(); break;
       case "close-guru": $("#guru").hidden = true; break;
       case "reset-record":
-        if (confirm("Reset all star records?")) {
+        if (confirm("Padam semua rekod bintang?")) {
           store.progress = {}; save(); openGuru(); refreshHome();
         }
         break;
