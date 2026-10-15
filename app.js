@@ -85,6 +85,53 @@ function build(sol, idx) {
 }
 const LEVELS = SOL.map(build);
 
+/* ---------- Bunyi (Web Audio, tanpa fail luaran) ---------- */
+let muted = localStorage.getItem("kodblok-mute") === "1", AC;
+function ctx() {
+  if (!AC) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C(); }
+  if (AC.state === "suspended") AC.resume();
+  return AC;
+}
+const N = n => 440 * Math.pow(2, (n - 9) / 12); // n = semiton dari C4
+function tone(f, d = 0.12, type = "sine", v = 0.15, delay = 0, to) {
+  if (muted) return;
+  const a = ctx(); if (!a) return;
+  const t = a.currentTime + delay, o = a.createOscillator(), g = a.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t);
+  if (to) o.frequency.exponentialRampToValueAtTime(to, t + d);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(v, t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t + d + 0.02);
+}
+const PENTA = [0, 2, 4, 7, 9];
+const sfx = {
+  click() { tone(N(12), .07, "triangle", .12); tone(N(19), .08, "triangle", .08, .04); },
+  pop(t) {
+    const f = N(t === "F" ? 12 : t === "loop" ? 19 : 16);
+    tone(f * .8, .1, "square", .07, 0, f * 1.25); tone(f * 2, .08, "sine", .06, .05);
+  },
+  tick(n) { tone(N(17 + n * 2), .08, "triangle", .12); },
+  del() { tone(N(9), .14, "sawtooth", .06, 0, N(-3)); },
+  err() { tone(N(-5), .12, "square", .08); tone(N(-5), .12, "square", .08, .14); },
+  start() { tone(N(0), .1, "square", .07); tone(N(7), .1, "square", .07, .08); tone(N(12), .16, "square", .07, .16); },
+  step(i) { tone(N(12 + PENTA[i % 5] + 12 * (Math.floor(i / 5) % 2)), .1, "square", .06); },
+  turn() { tone(N(5), .16, "triangle", .12, 0, N(17)); },
+  star() { [24, 28, 31, 36].forEach((n, i) => tone(N(n), .14, "sine", .13, i * .06)); },
+  bump() { tone(120, .25, "sawtooth", .16, 0, 50); },
+  fail() { [7, 4, 0].forEach((n, i) => tone(N(n), i === 2 ? .45 : .2, "triangle", .16, .2 + i * .2)); },
+  win() {
+    [12, 16, 19, 24, 28, 31, 36].forEach((n, i) => {
+      const last = i === 6;
+      tone(N(n), last ? .7 : .14, "square", .07, i * .1);
+      tone(N(n - 12), last ? .7 : .14, "triangle", .12, i * .1);
+    });
+  }
+};
+document.addEventListener("pointerdown", e => {
+  if (e.target.closest(".btn:not(#run):not(#mute), .lv")) sfx.click();
+});
+
 /* ---------- Keadaan ---------- */
 const $ = id => document.getElementById(id);
 let save = JSON.parse(localStorage.getItem("kodblok") || "{}");
@@ -173,17 +220,17 @@ function drawProg() {
 }
 function add(t) {
   if (running) return;
-  if (count(prog) >= L.max) return say("Had blok sudah penuh! Cuba guna <b>Ulang</b> atau buang blok.", "bad");
+  if (count(prog) >= L.max) return sfx.err(), say("Had blok sudah penuh! Cuba guna <b>Ulang</b> atau buang blok.", "bad");
   if (t === "loop") { prog.splice(cur, 0, { t: "loop", n: 2 }, { t: "end" }); }
   else prog.splice(cur, 0, { t });
-  cur++; drawProg();
+  sfx.pop(t); cur++; drawProg();
 }
 function tap(i) {
   if (running) return;
   const k = prog[i];
-  if (k.t === "loop") k.n = k.n >= 5 ? 2 : k.n + 1;
-  else if (k.t === "end") cur = i + 1;
-  else { prog.splice(i, 1); if (i < cur) cur--; }
+  if (k.t === "loop") { k.n = k.n >= 5 ? 2 : k.n + 1; sfx.tick(k.n); }
+  else if (k.t === "end") { cur = i + 1; sfx.click(); }
+  else { prog.splice(i, 1); if (i < cur) cur--; sfx.del(); }
   drawProg();
 }
 function matchEnd(i) {
@@ -196,6 +243,7 @@ function matchEnd(i) {
 }
 function undo() {
   if (running || cur === 0) return;
+  sfx.del();
   const i = cur - 1, k = prog[i];
   if (k.t === "end") cur = i;
   else if (k.t === "loop") { prog.splice(matchEnd(i), 1); prog.splice(i, 1); cur = i; }
@@ -212,24 +260,24 @@ async function run() {
   if (running) return;
   const acts = expand(prog).slice(0, 300);
   if (!acts.length) return say("Tambah beberapa blok dahulu!", "bad");
-  resetRun(); running = true; $("run").disabled = true; say("Robot sedang bergerak…");
-  let [x, y] = L.start, d = 1, got = 0;
+  resetRun(); sfx.start(); running = true; $("run").disabled = true; say("Robot sedang bergerak…");
+  let [x, y] = L.start, d = 1, got = 0, si = 0;
   try {
     for (const a of acts) {
       await sleep(420);
       if (a === "F") {
         const nx = x + DIRS[d][0], ny = y + DIRS[d][1];
         if (!L.cells.has(key(nx, ny))) {
-          const b = $("bot"); b.classList.add("bump"); setTimeout(() => b.classList.remove("bump"), 320);
+          sfx.bump(); const b = $("bot"); b.classList.add("bump"); setTimeout(() => b.classList.remove("bump"), 320);
           return fail("Aduh! Robot terlanggar. Semak arahan anda.");
         }
-        x = nx; y = ny; placeBot(x, y);
+        x = nx; y = ny; placeBot(x, y); sfx.step(si++);
         const k = key(x, y);
         if (L.stars.has(k) && !cellEls[k].classList.contains("got")) {
-          cellEls[k].classList.add("got"); got++; $("stars").textContent = `⭐ ${got} / ${L.stars.size}`;
+          cellEls[k].classList.add("got"); got++; sfx.star(); $("stars").textContent = `⭐ ${got} / ${L.stars.size}`;
         }
       } else {
-        const dd = a === "R" ? 1 : -1; d = (d + (dd > 0 ? 1 : 3)) % 4; rot += dd * 90;
+        const dd = a === "R" ? 1 : -1; d = (d + (dd > 0 ? 1 : 3)) % 4; rot += dd * 90; sfx.turn();
         $("face").style.transform = `rotate(${rot}deg)`;
       }
     }
@@ -238,8 +286,9 @@ async function run() {
     else fail("Robot belum sampai ke bendera 🏁. Cuba lagi!");
   } finally { running = false; $("run").disabled = false; }
 }
-function fail(m) { tries++; say(m + (tries >= 3 ? " Buntu? Tekan 💡 Petunjuk." : ""), "bad"); }
+function fail(m) { sfx.fail(); tries++; say(m + (tries >= 3 ? " Buntu? Tekan 💡 Petunjuk." : ""), "bad"); }
 function win(got) {
+  sfx.win();
   const n = L.stars.size, s = !n || got === n ? 3 : got * 2 >= n ? 2 : 1;
   save[lv] = Math.max(save[lv] || 0, s); persist();
   say("Hebat! Level selesai 🎉", "ok");
@@ -266,3 +315,11 @@ $("m-replay").onclick = () => { $("modal").classList.add("hidden"); prog = []; c
 $("reset-all").onclick = () => { if (confirm("Padam semua kemajuan?")) { save = {}; persist(); showMenu(); } };
 
 showMenu();
+
+/* Butang bisu / buka bunyi */
+const syncMute = () => { $("mute").textContent = muted ? "🔇" : "🔊"; };
+$("mute").onclick = () => {
+  muted = !muted; localStorage.setItem("kodblok-mute", muted ? "1" : "0"); syncMute();
+  if (!muted) sfx.click();
+};
+syncMute();
