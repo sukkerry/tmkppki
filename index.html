@@ -1,67 +1,93 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kod Blok – Belajar Coding Sambil Bermain</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jom Berkomunikasi Dalam Talian - TMK Tahun 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="top">
-    <h1>🧩 Kod Blok</h1>
-    <div class="right"><div id="hud" class="hud"></div><button id="mute" class="btn ghost" aria-label="Bunyi">🔊</button></div>
-  </header>
+<div class="sky" aria-hidden="true">
+  <span class="cloud c1">☁️</span><span class="cloud c2">☁️</span><span class="cloud c3">☁️</span>
+</div>
 
-  <main>
-    <!-- Pilihan level -->
-    <section id="menu" class="screen">
-      <p class="sub">Susun blok arahan untuk membawa robot ke bendera 🏁. Pilih level untuk mula!</p>
-      <div id="levels" class="levels"></div>
-      <button id="reset-all" class="btn ghost small">Set semula kemajuan</button>
-    </section>
+<header class="top">
+  <button id="homeBtn" class="btn round" aria-label="Kembali ke menu utama">🏠</button>
+  <h1>Jom Berkomunikasi!</h1>
+  <div class="score" aria-live="polite">⭐ <b id="totalStars">0</b></div>
+</header>
 
-    <!-- Permainan -->
-    <section id="game" class="screen hidden">
-      <div class="bar">
-        <button id="back" class="btn ghost">☰ Level</button>
-        <strong id="title"></strong>
-        <span id="stars" class="chip"></span>
-      </div>
-      <div class="play">
-        <div class="stage">
-          <div id="board" class="board"></div>
-          <p id="msg" class="msg"></p>
-        </div>
-        <div class="panel">
-          <div class="lab">Atur cara <span id="count" class="chip"></span></div>
-          <div id="prog" class="prog"></div>
-          <div class="lab">Blok arahan</div>
-          <div id="pal" class="pal"></div>
-          <div class="ctl">
-            <button id="run" class="btn go">▶ Jalankan</button>
-            <button id="undo" class="btn">↩ Undur</button>
-            <button id="clear" class="btn">🗑 Kosongkan</button>
-            <button id="hint" class="btn">💡 Petunjuk</button>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
+<main id="app">
+  <!-- MENU UTAMA -->
+  <section id="home" class="screen active">
+    <div class="hero">
+      <div class="mascot" aria-hidden="true">🤖</div>
+      <div class="bubble">Hai kawan! Pilih aras, kemudian pilih aktiviti.</div>
+    </div>
 
-  <div id="modal" class="modal hidden">
-    <div class="card">
-      <div id="m-emoji" class="m-emoji">🎉</div>
-      <h2 id="m-title"></h2>
-      <div id="m-stars" class="m-stars"></div>
-      <div class="ctl">
-        <button id="m-replay" class="btn">🔁 Main semula</button>
-        <button id="m-next" class="btn go">Seterusnya ➜</button>
-      </div>
+    <h2 class="label">Pilih aras</h2>
+    <div class="levels" id="levels">
+      <button class="lvl" data-l="1" aria-pressed="true">🌱 Aras 1<small>Mudah</small></button>
+      <button class="lvl" data-l="2" aria-pressed="false">🌿 Aras 2<small>Sederhana</small></button>
+      <button class="lvl" data-l="3" aria-pressed="false">🌳 Aras 3<small>Sukar</small></button>
+    </div>
+
+    <h2 class="label">Pilih aktiviti</h2>
+    <div class="grid" id="activityGrid"></div>
+
+    <details class="dskp">
+      <summary>📘 Maklumat DSKP (untuk guru)</summary>
+      <dl>
+        <dt>Tajuk</dt>
+        <dd>3.0 Komunikasi Dalam Talian<br>3.1 Perisian komunikasi dalam talian</dd>
+        <dt>Standard Kandungan (murid dibimbing untuk...)</dt>
+        <dd>3.1.1 Menyatakan kegunaan perisian komunikasi dalam talian dalam kehidupan harian<br>
+            3.1.2 Memberi contoh jenis-jenis komunikasi dalam talian</dd>
+        <dt>Objektif (murid boleh...)</dt>
+        <dd>1. Menyatakan jenis-jenis komunikasi dalam talian<br>
+            2. Menerangkan fungsi perisian komunikasi dalam talian<br>
+            3. Mengaplikasikan pengetahuan tentang penggunaan perisian komunikasi</dd>
+        <dt>Aras kesukaran</dt>
+        <dd>Aras 1 (Mudah): objektif 1, bimbingan tinggi, pilihan sedikit.<br>
+            Aras 2 (Sederhana): objektif 2, pilihan dan item bertambah.<br>
+            Aras 3 (Sukar): objektif 3, situasi sebenar dan item paling banyak.</dd>
+      </dl>
+    </details>
+  </section>
+
+  <!-- SKRIN AKTIVITI -->
+  <section id="play" class="screen">
+    <div class="playhead">
+      <h2 id="actTitle"></h2>
+      <div class="bar" role="progressbar" aria-label="Kemajuan"><div class="fill" id="progress"></div></div>
+    </div>
+    <div class="instruction">
+      <button id="speak" class="btn round sun" aria-label="Dengar arahan">🔊</button>
+      <p id="instr"></p>
+    </div>
+    <div id="stage" class="stage"></div>
+  </section>
+</main>
+
+<div id="toast" class="toast" role="status"></div>
+
+<div id="modal" class="modal" hidden>
+  <div class="mbox">
+    <div class="trophy">🏆</div>
+    <h2>Hebat! Tahniah!</h2>
+    <div class="mstars" id="mStars"></div>
+    <div class="macts">
+      <button id="again" class="btn">🔁 Main lagi</button>
+      <button id="next" class="btn mint">⬆️ Aras seterusnya</button>
+      <button id="menu" class="btn sky">🏠 Menu</button>
     </div>
   </div>
+</div>
 
-  <script src="app.js"></script>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<script src="script.js"></script>
 </body>
 </html>
