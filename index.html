@@ -1,93 +1,60 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Jom Berkomunikasi Dalam Talian - TMK Tahun 4</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Komunikasi Dalam Talian - TMK Tahun 4</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="sky" aria-hidden="true">
-  <span class="cloud c1">☁️</span><span class="cloud c2">☁️</span><span class="cloud c3">☁️</span>
-</div>
+<div class="bg"><i style="left:6%"></i><i style="left:22%;animation-delay:-4s"></i><i style="left:41%;animation-delay:-8s"></i><i style="left:60%;animation-delay:-2s"></i><i style="left:78%;animation-delay:-6s"></i><i style="left:92%;animation-delay:-10s"></i></div>
 
-<header class="top">
-  <button id="homeBtn" class="btn round" aria-label="Kembali ke menu utama">🏠</button>
-  <h1>Jom Berkomunikasi!</h1>
-  <div class="score" aria-live="polite">⭐ <b id="totalStars">0</b></div>
-</header>
-
-<main id="app">
-  <!-- MENU UTAMA -->
-  <section id="home" class="screen active">
-    <div class="hero">
-      <div class="mascot" aria-hidden="true">🤖</div>
-      <div class="bubble">Hai kawan! Pilih aras, kemudian pilih aktiviti.</div>
-    </div>
-
-    <h2 class="label">Pilih aras</h2>
-    <div class="levels" id="levels">
-      <button class="lvl" data-l="1" aria-pressed="true">🌱 Aras 1<small>Mudah</small></button>
-      <button class="lvl" data-l="2" aria-pressed="false">🌿 Aras 2<small>Sederhana</small></button>
-      <button class="lvl" data-l="3" aria-pressed="false">🌳 Aras 3<small>Sukar</small></button>
-    </div>
-
-    <h2 class="label">Pilih aktiviti</h2>
-    <div class="grid" id="activityGrid"></div>
-
-    <details class="dskp">
-      <summary>📘 Maklumat DSKP (untuk guru)</summary>
-      <dl>
-        <dt>Tajuk</dt>
-        <dd>3.0 Komunikasi Dalam Talian<br>3.1 Perisian komunikasi dalam talian</dd>
-        <dt>Standard Kandungan (murid dibimbing untuk...)</dt>
-        <dd>3.1.1 Menyatakan kegunaan perisian komunikasi dalam talian dalam kehidupan harian<br>
-            3.1.2 Memberi contoh jenis-jenis komunikasi dalam talian</dd>
-        <dt>Objektif (murid boleh...)</dt>
-        <dd>1. Menyatakan jenis-jenis komunikasi dalam talian<br>
-            2. Menerangkan fungsi perisian komunikasi dalam talian<br>
-            3. Mengaplikasikan pengetahuan tentang penggunaan perisian komunikasi</dd>
-        <dt>Aras kesukaran</dt>
-        <dd>Aras 1 (Mudah): objektif 1, bimbingan tinggi, pilihan sedikit.<br>
-            Aras 2 (Sederhana): objektif 2, pilihan dan item bertambah.<br>
-            Aras 3 (Sukar): objektif 3, situasi sebenar dan item paling banyak.</dd>
-      </dl>
-    </details>
+<main id="menu" class="screen">
+  <h1>📱 Jom Berkomunikasi! 💬</h1>
+  <section class="info">
+    <h3>Tajuk</h3>
+    <p>3.0 KOMUNIKASI DALAM TALIAN – 3.1 Perisian Komunikasi Dalam Talian</p>
+    <h3>Standard Kandungan</h3>
+    <ul>
+      <li>3.1.1 Menyatakan kegunaan perisian komunikasi dalam talian dalam kehidupan harian</li>
+      <li>3.1.2 Memberi contoh jenis-jenis komunikasi dalam talian</li>
+    </ul>
+    <h3>Objektif (murid boleh…)</h3>
+    <ul>
+      <li>Aras 1 ⭐ Menyatakan jenis-jenis komunikasi dalam talian</li>
+      <li>Aras 2 ⭐⭐ Menerangkan fungsi perisian komunikasi dan langkah penggunaannya</li>
+      <li>Aras 3 ⭐⭐⭐ Mengaplikasikan pengetahuan tentang penggunaan perisian komunikasi</li>
+    </ul>
   </section>
-
-  <!-- SKRIN AKTIVITI -->
-  <section id="play" class="screen">
-    <div class="playhead">
-      <h2 id="actTitle"></h2>
-      <div class="bar" role="progressbar" aria-label="Kemajuan"><div class="fill" id="progress"></div></div>
-    </div>
-    <div class="instruction">
-      <button id="speak" class="btn round sun" aria-label="Dengar arahan">🔊</button>
-      <p id="instr"></p>
-    </div>
-    <div id="stage" class="stage"></div>
-  </section>
+  <div class="lv" id="lv">
+    <button data-l="0" class="on">⭐ Aras 1 Mudah</button>
+    <button data-l="1">⭐⭐ Aras 2 Sederhana</button>
+    <button data-l="2">⭐⭐⭐ Aras 3 Mencabar</button>
+  </div>
+  <div id="cards"></div>
 </main>
 
-<div id="toast" class="toast" role="status"></div>
+<section id="game" class="screen hide">
+  <div class="bar">
+    <button id="back">🏠 Menu</button>
+    <h2 id="gt"></h2>
+    <div class="prog"><b id="pb"></b></div>
+  </div>
+  <div id="stage"></div>
+</section>
 
-<div id="modal" class="modal" hidden>
-  <div class="mbox">
-    <div class="trophy">🏆</div>
-    <h2>Hebat! Tahniah!</h2>
-    <div class="mstars" id="mStars"></div>
-    <div class="macts">
-      <button id="again" class="btn">🔁 Main lagi</button>
-      <button id="next" class="btn mint">⬆️ Aras seterusnya</button>
-      <button id="menu" class="btn sky">🏠 Menu</button>
+<div id="win" class="hide">
+  <div class="box">
+    <div class="cup">🏆</div>
+    <h2>Tahniah! Anda berjaya! 🎉</h2>
+    <div class="acts">
+      <button id="again">🔄 Main Semula</button>
+      <button id="tomenu">🏠 Menu</button>
     </div>
   </div>
 </div>
-
-<canvas id="confetti" aria-hidden="true"></canvas>
+<canvas id="fx"></canvas>
 <script src="script.js"></script>
 </body>
 </html>
