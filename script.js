@@ -1,158 +1,128 @@
-const $=s=>document.querySelector(s),sh=a=>[...a].sort(()=>Math.random()-.5);
-const D=[
-{n:'E-mel',e:'📧',u:'Hantar surat melalui internet',c:'tulis'},
-{n:'WhatsApp',e:'💬',u:'Hantar mesej dan gambar',c:'tulis'},
-{n:'SMS',e:'✉️',u:'Hantar mesej ringkas guna telefon',c:'tulis'},
-{n:'Panggilan Suara',e:'📞',u:'Bercakap dengan suara',c:'cakap'},
-{n:'Mesej Suara',e:'🎤',u:'Rakam suara dan hantar',c:'cakap'},
-{n:'Panggilan Video',e:'📹',u:'Bercakap sambil nampak wajah',c:'wajah'},
-{n:'Google Meet',e:'🖥️',u:'Belajar dan bermesyuarat dalam talian',c:'wajah'}];
-const C={tulis:{n:'Tulis Mesej',e:'✍️'},cakap:{n:'Bercakap',e:'🗣️'},wajah:{n:'Nampak Wajah',e:'👀'}};
-const S=[['📱 Buka aplikasi WhatsApp','👦 Pilih nama rakan','➡️ Tekan hantar'],
-['📧 Buka aplikasi e-mel','✍️ Tulis alamat penerima','💬 Tulis mesej','➡️ Tekan hantar'],
-['🖥️ Buka Google Meet','🔗 Klik sertai mesyuarat','🎥 Hidupkan kamera dan mikrofon','👋 Beri salam kepada rakan','🔴 Tekan butang merah untuk tamat']];
-const ST=['Menghantar WhatsApp','Menghantar E-mel','Panggilan Video'];
-const ACT=[['Mengecam','👀',recog],['Padankan','🧲',match],['Jigsaw','🧩',jig],['Susun Langkah','🔢',seq],['Kategorikan','🧺',cat]];
-const COL=['#ff6b6b','#3ab4f2','#f5a623','#4cd08a','#8b6bff'];
-let lvl=0,act=0,P={d:0,t:0},done={},ac;
+'use strict';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const rnd=n=>Math.floor(Math.random()*n);
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick=(a,n)=>shuffle(a).slice(0,n);
 
-/* bunyi & suara */
-function snd(f,d=.15,t='sine'){try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(.2,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}}
-const say=t=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ms-MY';u.rate=.85;speechSynthesis.speak(u)}catch(e){}};
-const good=()=>{snd(660);setTimeout(()=>snd(880),100)};
-const bad=el=>{snd(180,.25,'square');if(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}};
-const prog=()=>$('#pb').style.width=P.d/P.t*100+'%';
-const step=()=>{P.d++;prog();if(P.d>=P.t)setTimeout(win,700)};
+/* ===== DATA ===== */
+const DATA=[
+ {e:'📋',n:'Senarai kehadiran',u:'Tahu siapa yang hadir ke sekolah',k:'Sekolah'},
+ {e:'📝',n:'Markah ujian',u:'Tahu kemajuan belajar',k:'Sekolah'},
+ {e:'🗓️',n:'Jadual waktu',u:'Tahu mata pelajaran hari ini',k:'Sekolah'},
+ {e:'⚖️',n:'Berat badan',u:'Tahu badan sihat atau tidak',k:'Kesihatan'},
+ {e:'🌡️',n:'Suhu badan',u:'Tahu kita demam atau tidak',k:'Kesihatan'},
+ {e:'📏',n:'Tinggi badan',u:'Tahu kita sedang membesar',k:'Kesihatan'},
+ {e:'🧾',n:'Resit belian',u:'Tahu jumlah wang yang dibelanjakan',k:'Kedai'},
+ {e:'🏷️',n:'Harga barang',u:'Tahu barang mahal atau murah',k:'Kedai'},
+ {e:'🛒',n:'Senarai membeli-belah',u:'Tahu barang yang perlu dibeli',k:'Kedai'},
+ {e:'📞',n:'Nombor telefon',u:'Menghubungi ahli keluarga',k:'Lain'},
+ {e:'☁️',n:'Ramalan cuaca',u:'Tahu hari akan hujan atau cerah',k:'Lain'}];
+const NON=[['🪑','Kerusi'],['🚗','Kereta'],['🍎','Epal'],['⚽','Bola'],['🧸','Patung'],['🌳','Pokok'],['👟','Kasut'],['🛏️','Katil']];
+const SEQ=[
+ {t:'Berat badan',s:[['⚖️','Timbang berat badan'],['📒','Tulis berat dalam buku'],['👀','Lihat angka berat'],['🥗','Tahu badan sihat atau tidak'],['💬','Beritahu cikgu']]},
+ {t:'Markah ujian',s:[['✏️','Jawab kertas ujian'],['📝','Cikgu beri markah'],['📒','Cikgu rekod markah'],['📊','Lihat markah'],['💪','Tahu perlu belajar lagi']]},
+ {t:'Ramalan cuaca',s:[['☁️','Kumpul data cuaca'],['📺','Ramalan cuaca disiarkan'],['👀','Kita lihat ramalan'],['☔','Tahu hari akan hujan'],['🌂','Bawa payung']]},
+ {t:'Kehadiran',s:[['🏫','Murid datang ke sekolah'],['🙋','Guru panggil nama murid'],['📋','Guru tanda kehadiran'],['🔢','Kira murid yang hadir'],['✅','Tahu berapa orang hadir']]}];
+const CI={Data:'✅','Bukan Data':'❌',Sekolah:'🏫',Kesihatan:'🏥',Kedai:'🛒'};
+const CC={Data:'#d6f7dc','Bukan Data':'#ffe0e0',Sekolah:'#d9f2ff',Kesihatan:'#ffe0e6',Kedai:'#fff3c4'};
+const NAMES={mengecam:'🔍 Mengecam',padanan:'🧩 Padankan',jigsaw:'🖼️ Jigsaw',susun:'🔢 Susun',kategori:'🧺 Kategori'};
+const mk=(t,c,h)=>{const e=document.createElement(t);e.className=c;e.innerHTML=h;return e};
 
-/* menu */
-function menu(){
-  fw(false);$('#win').classList.add('hide');$('#game').classList.add('hide');$('#menu').classList.remove('hide');
-  $('#cards').innerHTML=ACT.map((a,i)=>`<button class="card" style="--col:${COL[i]};animation-delay:${i*.08}s" data-i="${i}"><span>${a[1]}</span>${i+1}. ${a[0]}${done[i+'-'+lvl]?' ✅':''}</button>`).join('');
-}
-function start(i){
-  act=i;P={d:0,t:0};fw(false);
-  $('#menu').classList.add('hide');$('#win').classList.add('hide');$('#game').classList.remove('hide');
-  $('#gt').textContent=`${ACT[i][1]} ${ACT[i][0]} – Aras ${lvl+1}`;
-  $('#pb').style.width=0;ACT[i][2]();scrollTo(0,0);
-}
-$('#cards').onclick=e=>{const b=e.target.closest('.card');if(b)start(+b.dataset.i)};
-$('#lv').onclick=e=>{const b=e.target.closest('button');if(!b)return;lvl=+b.dataset.l;document.querySelectorAll('#lv button').forEach(x=>x.classList.toggle('on',x===b));menu()};
-$('#back').onclick=menu;$('#tomenu').onclick=menu;$('#again').onclick=()=>start(act);
+/* ===== BUNYI ===== */
+let snd=true,ac;
+function tone(f,d=.15,t=0){if(!snd)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+  const o=ac.createOscillator(),g=ac.createGain(),s=ac.currentTime+t;o.type='triangle';o.frequency.value=f;
+  o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.15,s);g.gain.exponentialRampToValueAtTime(.001,s+d);o.start(s);o.stop(s+d)}catch(e){}}
+const good=()=>{tone(660);tone(880,.2,.1)},bad=()=>tone(180,.3);
 
-/* enjin seret & lepas (juga sentuh pilih lalu sentuh sasaran) */
-function dnd(root,check){
-  let sel=null;
-  const drop=(el,d)=>{
-    if(check(el,d)){
-      el.classList.remove('sel');el.classList.add('done','good');el.style.transform='';sel=null;
-      d.appendChild(el);d.classList.add('full');good();step();
-    }else{el.classList.remove('sel');sel=null;bad(el)}
-  };
-  root.querySelectorAll('.drag').forEach(el=>{
-    el.onpointerdown=e=>{
-      if(el.classList.contains('done'))return;e.preventDefault();
-      const sx=e.clientX,sy=e.clientY;let moved=false;el.setPointerCapture(e.pointerId);
-      el.onpointermove=m=>{const dx=m.clientX-sx,dy=m.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>8)moved=true;if(moved){el.classList.add('drag-on');el.style.transform=`translate(${dx}px,${dy}px) scale(1.1)`}};
-      el.onpointerup=u=>{
-        el.onpointermove=el.onpointerup=null;el.classList.remove('drag-on');el.style.transform='';
-        if(moved){el.style.visibility='hidden';const t=document.elementFromPoint(u.clientX,u.clientY);el.style.visibility='';const d=t&&t.closest('.drop');if(d)drop(el,d);}
-        else if(sel===el){el.classList.remove('sel');sel=null}
-        else{if(sel)sel.classList.remove('sel');sel=el;el.classList.add('sel');say(el.dataset.say||'')}
-      };
-    };
-  });
-  root.querySelectorAll('.drop').forEach(d=>d.onclick=()=>{if(sel)drop(sel,d)});
-}
+/* ===== ASAS ===== */
+let L=1,A=null,fid=0;
+const say=t=>$('#ins').textContent=t;
+const show=id=>$$('.screen').forEach(s=>s.classList.toggle('show',s.id===id));
+const prog=(d,t)=>$('#pb').style.width=(d/t*100)+'%';
+function step(d,t){good();prog(d,t);if(d>=t)setTimeout(win,900)}
+const shake=e=>{e.classList.remove('no');void e.offsetWidth;e.classList.add('no')};
 
-/* 1. MENGECAM */
-function recog(){
-  const n=[4,5,6][lvl],k=lvl+2,pool=sh(D);P.t=n;let i=0;
-  (function next(){
-    const t=pool[i%pool.length],o=sh([t,...sh(D.filter(x=>x!==t)).slice(0,k-1)]);
-    $('#stage').innerHTML=`<div class="q">${lvl<2?'Apakah ini?':'Pilih gambar yang betul:<br>“'+t.u+'”'}</div>${lvl<2?`<div class="big">${t.e}</div>`:''}<div class="opts">${o.map((x,j)=>`<button class="opt" data-j="${j}">${lvl<2?x.n:`<span class="em">${x.e}</span>`}</button>`).join('')}</div>`;
-    say(lvl<2?'Apakah ini?':t.u);
-    $('#stage').onclick=e=>{
-      const b=e.target.closest('.opt');if(!b||b.dataset.lock)return;
-      if(o[+b.dataset.j]===t){$('#stage').onclick=null;b.classList.add('good');good();say(t.n);i++;step();if(P.d<P.t)setTimeout(next,1100)}
-      else bad(b);
-    };
-  })();
-}
+function start(a){A=a;$('#ov').classList.remove('show');fid++;show('game');
+  $('#gt').textContent=NAMES[a]+' • Aras '+L;$('#board').innerHTML='';prog(0,1);ACT[a](L)}
 
-/* 2. PADANKAN (seret & lepas) */
-function match(){
-  const n=lvl+3,p=sh(D).slice(0,n);P.t=n;
-  $('#stage').innerHTML=`<div class="q">Seret gambar ke jawapan yang betul</div><div class="cols"><div>${sh(p).map(x=>`<div class="drag" data-k="${x.n}" data-say="${x.n}"><span class="em">${x.e}</span></div>`).join('')}</div><div>${sh(p).map(x=>`<div class="drop" data-k="${x.n}">${lvl<2?x.n:x.u}</div>`).join('')}</div></div>`;
-  dnd($('#stage'),(a,d)=>a.dataset.k===d.dataset.k);
-}
+/* Seret & lepas (sokong tetikus dan sentuhan) */
+function drag(e,chk){
+  e.onpointerdown=ev=>{ev.preventDefault();e.setPointerCapture(ev.pointerId);const x0=ev.clientX,y0=ev.clientY;e.classList.add('drag');
+    e.onpointermove=m=>e.style.transform=`translate(${m.clientX-x0}px,${m.clientY-y0}px) scale(1.15)`;
+    e.onpointerup=e.onpointercancel=u=>{e.onpointermove=e.onpointerup=e.onpointercancel=null;e.classList.remove('drag');e.style.transform='';
+      e.style.visibility='hidden';const el=document.elementFromPoint(u.clientX,u.clientY);e.style.visibility='';
+      const s=el&&el.closest('.slot');if(s&&!chk(s)){bad();shake(e)}}}}
 
-/* 3. JIGSAW (sentuh dua keping untuk tukar) */
-function jig(){
-  const [r,c]=[[2,2],[2,3],[3,3]][lvl],n=r*c,it=sh(D)[0];P.t=n;
-  const cv=document.createElement('canvas');cv.width=c*100;cv.height=r*100;const x=cv.getContext('2d');
-  const g=x.createLinearGradient(0,0,cv.width,cv.height);g.addColorStop(0,'#ffe27a');g.addColorStop(1,'#8fd8ff');
-  x.fillStyle=g;x.fillRect(0,0,cv.width,cv.height);
-  x.font=Math.min(cv.width,cv.height)*.7+'px serif';x.textAlign='center';x.textBaseline='middle';x.fillText(it.e,cv.width/2,cv.height/2+6);
-  const url=cv.toDataURL();let o=[...Array(n).keys()];
-  do{o=sh(o)}while(o.every((v,i)=>v===i));
-  let s=-1,fin=false;
-  $('#stage').innerHTML=`<div class="q">Susun gambar ${it.n}<br><small>Sentuh dua keping untuk bertukar</small></div>${lvl<2?`<img class="pv" src="${url}" alt="contoh">`:''}<div class="jig" style="grid-template-columns:repeat(${c},1fr)"></div>`;
-  const B=$('.jig');
-  function draw(){
-    B.innerHTML=o.map((v,i)=>`<div class="tile${v===i?' ok':''}${s===i?' sel':''}" data-i="${i}" style="background-image:url(${url});background-size:${c*100}% ${r*100}%;background-position:${(v%c)/(c-1)*100}% ${Math.floor(v/c)/(r-1)*100}%"></div>`).join('');
-    P.d=o.filter((v,i)=>v===i).length;prog();
-    if(P.d===n&&!fin){fin=true;good();say(it.n);setTimeout(win,900)}
-  }
-  B.onclick=e=>{
-    const t=e.target.closest('.tile');if(!t||fin)return;const i=+t.dataset.i;
-    if(s<0){s=i;snd(500)}
-    else if(s===i)s=-1;
-    else{[o[s],o[i]]=[o[i],o[s]];s=-1;snd(700)}
-    draw();
-  };
-  draw();
-}
+/* ===== AKTIVITI ===== */
+const ACT={};
 
-/* 4. MENYUSUN SUSUNAN */
-function seq(){
-  const s=S[lvl],n=s.length;P.t=n;let nx=0;
-  $('#stage').innerHTML=`<div class="q">${ST[lvl]}<br><small>Tekan langkah mengikut urutan yang betul</small></div><div class="slots">${s.map((_,i)=>`<div class="slot"><b>${i+1}</b></div>`).join('')}</div><div class="opts">${sh(s.map((_,i)=>i)).map(i=>`<button class="opt" data-i="${i}">${s[i]}</button>`).join('')}</div>`;
-  $('#stage').onclick=e=>{
-    const b=e.target.closest('.opt');if(!b)return;const i=+b.dataset.i;
-    if(i===nx){const sl=document.querySelectorAll('.slot')[nx];sl.innerHTML=`<b>${nx+1}</b>${s[i]}`;sl.classList.add('on','good');b.remove();nx++;good();say(s[i].replace(/^\S+\s/,''));step()}
-    else bad(b);
-  };
-}
+/* 1. MENGECAM – apa itu data & apa kegunaannya */
+ACT.mengecam=L=>{const N=5,n=[3,4,4][L-1];let q=0;
+  (function next(){const d=pick(DATA,1)[0],ty=L===1||(L===3&&q%2===0);let o,c,h='';
+    if(ty){o=shuffle([[d.e,d.n],...pick(NON,n-1)]);c=d.n;say('Yang manakah DATA? 🤔')}
+    else{o=shuffle([d,...pick(DATA.filter(x=>x!==d),n-1)]).map(x=>['💡',x.u]);c=d.u;h=`<div class="chip big"><b>${d.e}</b>${d.n}</div>`;say('Apakah kegunaan data ini? 🤔')}
+    const B=$('#board');B.innerHTML=h+'<div class="row"></div>';const R=B.lastChild;
+    o.forEach(([e,t],i)=>{const b=mk('button','chip',`<b>${e}</b>${t}`);b.style.animationDelay=i*.08+'s';
+      b.onclick=()=>{if(t===c){b.classList.add('ok');R.style.pointerEvents='none';say(`✅ ${d.e} ${d.n}: ${d.u}`);step(++q,N);if(q<N)setTimeout(next,2200)}else{bad();shake(b)}};R.append(b)})})()};
 
-/* 5. MENGKATEGORIKAN (seret ke bakul) */
-function cat(){
-  const ks=lvl?['tulis','cakap','wajah']:['tulis','cakap'];
-  const it=sh(D.filter(x=>ks.includes(x.c))).slice(0,[4,6,7][lvl]);P.t=it.length;
-  $('#stage').innerHTML=`<div class="q">Masukkan ke dalam bakul yang betul</div><div class="baskets">${ks.map(k=>`<div class="drop" data-k="${k}"><div>${C[k].e} ${C[k].n}</div></div>`).join('')}</div><div class="pool">${it.map(x=>`<div class="drag" data-k="${x.c}" data-say="${x.n}"><span class="em">${x.e}</span>${x.n}</div>`).join('')}</div>`;
-  dnd($('#stage'),(a,d)=>a.dataset.k===d.dataset.k);
-}
+/* 2. PADANKAN – seret data ke kegunaannya */
+ACT.padanan=L=>{const n=[3,4,6][L-1],it=pick(DATA,n);let d=0;say('Seret data ke kegunaannya! 👆');
+  $('#board').innerHTML='<div class="row" id="sl"></div><div class="row" id="dr"></div>';
+  shuffle(it).forEach(x=>{const s=mk('div','slot w',`<b>💡</b>${x.u}`);s.dataset.v=x.n;$('#sl').append(s)});
+  shuffle(it).forEach(x=>{const e=mk('div','chip dr',`<b>${x.e}</b>${x.n}`);$('#dr').append(e);
+    drag(e,s=>{if(s.dataset.v!==x.n||s.classList.contains('done'))return 0;s.classList.add('done');s.innerHTML=`<b>${x.e}</b>${x.n}<small>${x.u}</small>`;e.remove();step(++d,n);return 1})})};
 
-/* kemenangan: piala + bunga api */
-function win(){
-  done[act+'-'+lvl]=1;$('#win').classList.remove('hide');
-  say('Tahniah! Anda berjaya!');[523,659,784,1047].forEach((f,i)=>setTimeout(()=>snd(f,.25),i*150));fw(true);
-}
-const cv=$('#fx'),cx=cv.getContext('2d');let ps=[],run=false,tm;
-function fw(on){
-  run=on;clearInterval(tm);
-  if(on){cv.width=innerWidth;cv.height=innerHeight;burst();tm=setInterval(burst,450);loop()}
-  else{ps=[];cx.clearRect(0,0,cv.width,cv.height)}
-}
-function burst(){
-  const x=Math.random()*cv.width*.8+cv.width*.1,y=Math.random()*cv.height*.5+cv.height*.1,h=Math.random()*360;
-  for(let i=0;i<50;i++){const a=i/50*6.283,s=2+Math.random()*4;ps.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:1,h})}
-  snd(110+Math.random()*100,.2,'triangle');
-}
-function loop(){
-  if(!run&&!ps.length)return;
-  cx.globalCompositeOperation='destination-out';cx.fillStyle='rgba(0,0,0,.2)';cx.fillRect(0,0,cv.width,cv.height);
-  cx.globalCompositeOperation='lighter';ps=ps.filter(p=>p.l>0);
-  ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.06;p.vx*=.98;p.l-=.012;cx.fillStyle=`hsla(${p.h},100%,60%,${p.l})`;cx.beginPath();cx.arc(p.x,p.y,3.5,0,7);cx.fill()});
-  requestAnimationFrame(loop);
-}
-menu();
+/* 3. JIGSAW – cantumkan gambar data */
+ACT.jigsaw=L=>{const [r,c]=[[2,2],[2,3],[3,3]][L-1],S=Math.min(100,Math.floor((Math.min(innerWidth,640)-50)/c)),N=r*c,p=pick(DATA,1)[0];
+  const cv=document.createElement('canvas');cv.width=c*100;cv.height=r*100;const x=cv.getContext('2d'),g=x.createLinearGradient(0,0,cv.width,cv.height);
+  g.addColorStop(0,'#bdeaff');g.addColorStop(1,'#ffe3f0');x.fillStyle=g;x.fillRect(0,0,cv.width,cv.height);
+  x.font=Math.min(cv.width,cv.height)*.8+'px serif';x.textAlign='center';x.textBaseline='middle';x.fillText(p.e,cv.width/2,cv.height/2+8);
+  const url=`url(${cv.toDataURL()})`;let d=0;
+  const st=(e,i)=>{e.classList.add('jg');Object.assign(e.style,{width:S+'px',height:S+'px',backgroundImage:url,backgroundSize:`${c*S}px ${r*S}px`,backgroundPosition:`-${i%c*S}px -${Math.floor(i/c)*S}px`})};
+  say(`Cantumkan gambar data: ${p.n} 🧩`);
+  $('#board').innerHTML=`<div id="gb" style="display:grid;grid-template-columns:repeat(${c},${S}px);gap:3px"></div><div class="row" id="dr"></div>`;
+  for(let i=0;i<N;i++){const s=mk('div','slot gh'+(L===3?' h':''),'');s.dataset.v=i;st(s,i);$('#gb').append(s)}
+  shuffle([...Array(N).keys()]).forEach(i=>{const e=mk('div','t dr','');st(e,i);$('#dr').append(e);
+    drag(e,s=>{if(+s.dataset.v!==i||s.classList.contains('done'))return 0;s.classList.remove('gh');s.classList.add('done');e.remove();step(++d,N);if(d===N)say(`✅ ${p.n}: ${p.u}`);return 1})})};
+
+/* 4. SUSUN – susun langkah menggunakan data */
+ACT.susun=L=>{const n=[3,4,5][L-1],R=3,ss=pick(SEQ,R);let q=0;
+  (function next(){const sq=ss[q],st=sq.s.slice(0,n);say(`Susun langkah: ${sq.t} (${q+1}/${R})`);
+    $('#board').innerHTML='<div class="row col" id="an"></div><div class="row" id="tr"></div>';
+    const an=$('#an'),tr=$('#tr'),cells=st.map((_,i)=>{const c=mk('div','slot w sn','');c.dataset.n=i+1;an.append(c);return c});
+    const toks=shuffle(st.map((_,i)=>i)).map(i=>{const b=mk('button','chip',`<b>${st[i][0]}</b>${st[i][1]}`);b.dataset.v=i;
+      b.onclick=()=>{if(b.parentNode===tr){const c=cells.find(c=>!c.firstChild);if(c){c.append(b);check()}}else tr.append(b)};tr.append(b);return b});
+    function check(){if(cells.some(c=>!c.firstChild))return;
+      if(cells.every((c,i)=>+c.firstChild.dataset.v===i)){an.style.pointerEvents='none';cells.forEach(c=>c.classList.add('done'));step(++q,R);if(q<R)setTimeout(next,1300)}
+      else{bad();cells.forEach(c=>shake(c.firstChild));setTimeout(()=>toks.forEach(b=>{b.classList.remove('no');tr.append(b)}),700)}}})()};
+
+/* 5. KATEGORI – asingkan data ke bakul yang betul */
+ACT.kategori=L=>{let cs,it;
+  if(L===1){cs=['Data','Bukan Data'];it=[...pick(DATA,2).map(x=>[x.e,x.n,'Data']),...pick(NON,2).map(x=>[x[0],x[1],'Bukan Data'])]}
+  else{cs=pick(['Sekolah','Kesihatan','Kedai'],L===2?2:3);it=cs.flatMap(c=>pick(DATA.filter(x=>x.k===c),3).map(x=>[x.e,x.n,c]))}
+  let d=0;const n=it.length;say(L===1?'Data atau bukan data? Letakkan dalam bakul! 🧺':'Letakkan data dalam bakul yang betul! 🧺');
+  $('#board').innerHTML='<div class="row" id="sl" style="align-items:stretch;width:100%"></div><div class="row" id="dr"></div>';
+  cs.forEach(c=>{const b=mk('div','slot bk',`<b>${CI[c]} ${c}</b><div class="in"></div>`);b.dataset.c=c;b.style.background=CC[c];$('#sl').append(b)});
+  shuffle(it).forEach(([e,t,c])=>{const x=mk('div','chip dr',`<b>${e}</b>${t}`);$('#dr').append(x);
+    drag(x,s=>{if(s.dataset.c!==c)return 0;s.querySelector('.in').append(mk('div','chip mini',`<b>${e}</b>${t}`));x.remove();step(++d,n);return 1})})};
+
+/* ===== KEJAYAAN: PIALA + BUNGA API ===== */
+function win(){$('#ov').classList.add('show');[523,659,784,1047].forEach((f,i)=>tone(f,.3,i*.15));fire()}
+function fire(){const c=$('#fx'),x=c.getContext('2d'),id=++fid;c.width=innerWidth;c.height=innerHeight;let P=[],t=0;
+  const burst=()=>{const X=Math.random()*c.width,Y=Math.random()*c.height*.55+30,h=rnd(360);
+    for(let i=0;i<50;i++){const a=i/50*6.283,s=2+Math.random()*4;P.push({x:X,y:Y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:1,h})}};
+  (function loop(){if(fid!==id)return;
+    x.globalCompositeOperation='destination-out';x.fillStyle='rgba(0,0,0,.2)';x.fillRect(0,0,c.width,c.height);x.globalCompositeOperation='lighter';
+    if(t++%25===0){burst();tone(120+rnd(100),.25)}
+    P=P.filter(p=>p.l>0);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.05;p.vx*=.99;p.l-=.012;
+      x.fillStyle=`hsla(${p.h},100%,60%,${p.l})`;x.beginPath();x.arc(p.x,p.y,3,0,6.3);x.fill()});
+    requestAnimationFrame(loop)})()}
+
+/* ===== PERISTIWA ===== */
+$$('.lv').forEach(b=>b.onclick=()=>{L=+b.dataset.l;$$('.lv').forEach(x=>x.classList.toggle('on',x===b))});
+$$('.card').forEach(b=>b.onclick=()=>start(b.dataset.a));
+$('#again').onclick=()=>start(A);
+$('#menuBtn').onclick=$('#back').onclick=()=>{$('#ov').classList.remove('show');fid++;show('menu')};
+$('#snd').onclick=e=>{snd=!snd;e.currentTarget.textContent=snd?'🔊':'🔇'};
+$('#bg').innerHTML=Array.from({length:14},()=>`<span style="left:${rnd(95)}%;animation-duration:${12+rnd(14)}s;animation-delay:-${rnd(20)}s;font-size:${1.5+rnd(20)/10}rem">${['⭐','🎈','☁️','🌈','🦋','🌸'][rnd(6)]}</span>`).join('');
